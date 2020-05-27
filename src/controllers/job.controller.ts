@@ -1,5 +1,7 @@
+import {authenticate} from '@loopback/authentication';
 import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {del, get, getModelSchemaRef, param, patch, post, put, requestBody} from '@loopback/rest';
+import {PermissionKeys} from '../authorization/permission-keys';
 import {Job} from '../models';
 import {JobRepository} from '../repositories';
 
@@ -11,6 +13,7 @@ export class JobController {
 
   // admin should be authenticated
   // only admin can access this route
+  // Please run x and y function before this (using interceptor)
   @post('/jobs', {
     responses: {
       '200': {
@@ -19,6 +22,7 @@ export class JobController {
       },
     },
   })
+  @authenticate('jwt', {required: [PermissionKeys.CreateJob]})
   async create(
     @requestBody({
       content: {
@@ -70,6 +74,10 @@ export class JobController {
     return this.jobRepository.find(filter);
   }
 
+
+  // admin should be authenticated
+  // only admin can access this route
+  // Please run x and y function before this (using interceptor)
   @patch('/jobs', {
     responses: {
       '200': {
@@ -111,6 +119,10 @@ export class JobController {
     return this.jobRepository.findById(id, filter);
   }
 
+
+  // admin should be authenticated
+  // only admin can access this route
+  // Please run x and y function before this (using interceptor)
   @patch('/jobs/{id}', {
     responses: {
       '204': {
@@ -146,6 +158,10 @@ export class JobController {
     await this.jobRepository.replaceById(id, job);
   }
 
+
+  // admin should be authenticated
+  // only admin can access this route
+  // Please run x and y function before this (using interceptor)
   @del('/jobs/{id}', {
     responses: {
       '204': {

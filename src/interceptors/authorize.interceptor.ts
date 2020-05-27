@@ -1,4 +1,6 @@
-import {globalInterceptor, Interceptor, InvocationContext, InvocationResult, Provider, ValueOrPromise} from '@loopback/context';
+import {AuthenticationBindings, AuthenticationMetadata} from '@loopback/authentication';
+import {globalInterceptor, inject, Interceptor, InvocationContext, InvocationResult, Provider, ValueOrPromise} from '@loopback/context';
+import {RequiredPermissions} from '../types';
 
 /**
  * This class will be bound to the application as an `Interceptor` during
@@ -6,9 +8,11 @@ import {globalInterceptor, Interceptor, InvocationContext, InvocationResult, Pro
  */
 @globalInterceptor('', {tags: {name: 'authorize'}})
 export class AuthorizeInterceptor implements Provider<Interceptor> {
-  /*
-  constructor() {}
-  */
+
+  constructor(
+    @inject(AuthenticationBindings.METADATA)
+    public metadata: AuthenticationMetadata
+  ) {}
 
   /**
    * This method is used by LoopBack context to produce an interceptor function
@@ -31,7 +35,19 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
   ) {
     try {
       // Add pre-invocation logic here
+
       console.log('Log from authorize global interceptor')
+      console.log(this.metadata);
+
+      // if you not provide options in your @authenticate decorator
+      if (!this.metadata) return await next();
+      const requriedPermissions = this.metadata.options as RequiredPermissions;
+
+      console.log(requriedPermissions);
+
+
+
+
       const result = await next();
       // Add post-invocation logic here
       return result;
