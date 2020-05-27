@@ -4,6 +4,7 @@ import {repository} from '@loopback/repository';
 import {get, getJsonSchemaRef, post, requestBody} from '@loopback/rest';
 import {UserProfile} from '@loopback/security';
 import * as _ from 'lodash';
+import {PermissionKeys} from '../authorization/permission-keys';
 import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
 import {User} from '../models';
 import {Credentials, UserRepository} from '../repositories';
@@ -33,7 +34,7 @@ export class UserController {
 
   ) {}
 
-  @post('/signup', {
+  @post('/users/signup', {
     responses: {
       '200': {
         description: 'User',
@@ -45,13 +46,16 @@ export class UserController {
   })
   async signup(@requestBody() userData: User) {
     validateCredentials(_.pick(userData, ['email', 'password']));
+
+    userData.permissions = [PermissionKeys.AccessAuthFeature];
+
     userData.password = await this.hasher.hashPassword(userData.password)
     const savedUser = await this.userRepository.create(userData);
     delete savedUser.password;
     return savedUser;
   }
 
-  @post('/login', {
+  @post('/users/login', {
     responses: {
       '200': {
         description: 'Token',

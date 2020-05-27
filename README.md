@@ -359,5 +359,89 @@ To use it again bind in application.ts
 
 # Finally done 
 
+* Step1:
 
+  Add the permission propery into the User model 
 
+  ```typescript
+  @property.array(String)
+  permission:String[];
+  ```
+
+  
+
+* Step2: 
+
+  Create a Admin controller which will be empty.
+
+  Now create a ``Permission-keys.ts`` where add permission according to your scenerio
+
+  ```typescript
+  export const enum PermissionKeys {
+    // admin
+    CreateJob = 'CreateJob',
+    UpdateJob = 'UpdateJob',
+    DeleteJob = 'DeleteJob',
+  
+    // normal authenticated user
+    AccessAuthFeature = 'AccessAuthFeature'
+  }
+  ```
+
+  
+
+  Now create a signup route for admin and add the permissions
+
+  ```typescript
+  async createAdmin(@requestBody() admin: User) {
+  
+      validateCredentials(_.pick(admin, ['email', 'password']));
+      admin.permissions = [
+        PermissionKeys.CreateJob,
+        PermissionKeys.UpdateJob,
+        PermissionKeys.DeleteJob
+      ];
+  
+  
+      admin.password = await this.hasher.hashPassword(admin.password);
+  
+      const savedAdmin = await this.userRepository.create(admin);
+      delete savedAdmin.password;
+      return savedAdmin;
+    }
+  ```
+
+  
+
+* Step3:
+
+  Create ``Job`` model, repository and controller(CRUD controller) to apply the role based access controller.
+
+  ```typescript
+  @property({
+      type: 'number',
+      id: true,
+      generated: true,
+    })
+    id?: number;
+  
+    @property({
+      type: 'string',
+      required: true,
+    })
+    title: string;
+  ```
+
+  
+
+  Now implement the Global interceptor
+
+   ```typescript
+  lb4 interceptor authorize
+   ```
+
+  It will run before every controller.
+
+  
+
+  
