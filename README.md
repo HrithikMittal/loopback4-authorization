@@ -132,30 +132,31 @@
     In this class implements one method:
 
   * generateToken (return: Promise<string>)
-  * verifyToken (return: Promise<UserProfile>)
-
- 
-
-To use it again bind in application.ts
-
+  * verifyToken (return: Promise<UserProfile>
+  
+  
+  To use it again bind in application.ts
+  
   ```typescript
- this.bind('service.jwt.service').toClass(JWTService);
+  this.bind('service.jwt.service').toClass(JWTService);
   ```
-
+  
+  
+  
   Now do the SQL Injection in the controller class ``UserController`` constructor
-
+  
   ```typescript
   @inject('service.jwt.service')
-  public jwtService: JWTService,
+    public jwtService: JWTService,
   ```
-
+  
   Now in the ``\login`` route use the method
-
+  
   ```typescript
   const token = await this.jwtService.generateToken(userProfile);
-  return Promise.resolve({token: token})
+    return Promise.resolve({token: token})
   ```
-
+  
   
 
 # Congo now you will get the token on Login
@@ -444,4 +445,136 @@ To use it again bind in application.ts
 
   
 
+  Now add the authorize decorator with needed permission in the controller.
+
+  Go to the ``job Create controller`` 
+
+  ```typescript
+   @authenticate('jwt', {required: [PermissionKeys.CreateJob]})
+  ```
+
   
+
+* Step4:
+
+  Now create a file ``tyes.ts``
+
+  ```typescript
+  import {PermissionKeys} from './authorization/permission-keys';
+  
+  export interface RequiredPermissions {
+    required: PermissionKeys[]
+  }
+  ```
+
+  
+
+  Now go to the authenticate interceptor and add the Metadata
+
+  ```typescript
+  // first inject it
+    constructor(
+      @inject(AuthenticationBindings.METADATA)
+      public metadata: AuthenticationMetadata
+    ) {}
+  
+  .
+  .
+  .
+  
+  console.log('Log from authorize global interceptor')
+  console.log(this.metadata);
+  
+  // if you not provide options in your @authenticate decorator
+  if (!this.metadata) return await next();
+  const requriedPermissions = this.metadata.options as RequiredPermissions;
+  
+  console.log(requriedPermissions);
+  .
+  .
+  .
+  ```
+
+  (check it in the file)
+
+  
+
+* Step 5:
+
+  Now again go to the ``types.ts`` and implement the interface ``MyUserProfile``
+
+  ```typescript
+  
+  export interface MyUserProfile {
+    id: string;
+    email?: string;
+    name: string;
+    permissions: PermissionKeys[];
+  }
+  ```
+
+  
+
+* Step 6: 
+
+  Now to get the User Profile object we add dependency injection in ``authorize interceptor``
+
+  ```typescript
+      // dependency inject
+      @inject.getter(AuthenticationBindings.CURRENT_USER)
+      public getCurrentUser: Getter<MyUserProfile>,
+  
+  ```
+
+  
+
+* Step 7:
+
+  Now what you have done in [[Step7: How to Protect a route]()] go to the ``verifytoken`` method in ``jwt service`` and add the permissions in return object
+
+  ```typescript
+  async verifyToken(token: string): Promise<UserProfile> {
+  
+      if (!token) {
+        throw new HttpErrors.Unauthorized(
+          `Error verifying token:'token' is null`
+        )
+      };
+  
+      let userProfile: UserProfile;
+      try {
+        const decryptedToken = await verifyAsync(token, this.jwtSecret);
+        userProfile = Object.assign(
+          {[securityId]: '', id: '', name: '', permissions: []},
+          {
+            [securityId]: decryptedToken.id,
+            id: decryptedToken.id, name: decryptedToken.name,
+            permissions: decryptedToken.permissions
+          }
+        );
+      }
+      catch (err) {
+        throw new HttpErrors.Unauthorized(`Error verifying token:${err.message}`)
+      }
+      return userProfile;
+    }
+  ```
+
+  and also return permissions in the return ``convertToUserProfile`` method in ``user service``  [[Step4:]()]
+
+  ```
+   return {
+        [securityId]: user.id!.toString(),
+        name: userName,
+        id: user.id,
+        email: user.email,
+        permissions: user.permissions
+      };	
+  ```
+
+  
+
+* Step 8:
+
+  
+

@@ -1,6 +1,6 @@
 import {AuthenticationBindings, AuthenticationMetadata} from '@loopback/authentication';
-import {globalInterceptor, inject, Interceptor, InvocationContext, InvocationResult, Provider, ValueOrPromise} from '@loopback/context';
-import {RequiredPermissions} from '../types';
+import {Getter, globalInterceptor, inject, Interceptor, InvocationContext, InvocationResult, Provider, ValueOrPromise} from '@loopback/context';
+import {MyUserProfile, RequiredPermissions} from '../types';
 
 /**
  * This class will be bound to the application as an `Interceptor` during
@@ -11,7 +11,12 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
 
   constructor(
     @inject(AuthenticationBindings.METADATA)
-    public metadata: AuthenticationMetadata
+    public metadata: AuthenticationMetadata,
+
+    // dependency inject
+    @inject.getter(AuthenticationBindings.CURRENT_USER)
+    public getCurrentUser: Getter<MyUserProfile>,
+
   ) {}
 
   /**
@@ -41,10 +46,12 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
 
       // if you not provide options in your @authenticate decorator
       if (!this.metadata) return await next();
+
       const requriedPermissions = this.metadata.options as RequiredPermissions;
 
-      console.log(requriedPermissions);
-
+      // console.log(requriedPermissions);
+      const user = await this.getCurrentUser();
+      console.log('User Permissions:', user.permissions);
 
 
 
