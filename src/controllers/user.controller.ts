@@ -88,7 +88,7 @@ export class UserController {
   }
 
 
-  @authenticate("jwt")
+  @authenticate('jwt', {required: [PermissionKeys.AccessAuthFeature]})
   @get('/users/me', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
