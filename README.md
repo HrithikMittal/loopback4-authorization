@@ -28,7 +28,7 @@ npm start
 
   ```typescript
   @property.array(String)
-  permission:String[];
+  permissions:String[];
   ```
 
   
