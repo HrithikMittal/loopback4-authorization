@@ -59,7 +59,7 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
         user.permissions,
         requriedPermissions.required,
       ).length;
-      if (results !== requriedPermissions.required.length) {
+      if (requriedPermissions.required != undefined && results !== requriedPermissions.required.length) {
         throw new HttpErrors.Forbidden('INVALID ACCESS');
       }
 
