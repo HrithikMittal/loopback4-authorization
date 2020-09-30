@@ -23,9 +23,7 @@ export class AdminController {
     responses: {
       '200': {
         description: 'Admin',
-        content: {
-          schema: getJsonSchemaRef(User)
-        }
+        content: {'application/json': {schema: getModelSchemaRef(User)}},
       }
     }
   })
