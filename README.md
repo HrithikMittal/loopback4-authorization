@@ -119,7 +119,7 @@ npm start
 
 * ### Step4:
 
-  Now create a file ``tyes.ts``
+  Now create a file ``types.ts``
 
   ```typescript
   import {PermissionKeys} from './authorization/permission-keys';
