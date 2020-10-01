@@ -5,5 +5,5 @@ export const enum PermissionKeys {
   DeleteJob = 'DeleteJob',
 
   // normal authenticated user
-  AccessAuthFeature = 'AccessAuthFeature'
+  AccessAuthFeature = 'AccessAuthFeature',
 }

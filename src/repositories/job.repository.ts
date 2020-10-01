@@ -8,9 +8,7 @@ export class JobRepository extends DefaultCrudRepository<
   typeof Job.prototype.id,
   JobRelations
 > {
-  constructor(
-    @inject('datasources.db') dataSource: DbDataSource,
-  ) {
+  constructor(@inject('datasources.db') dataSource: DbDataSource) {
     super(Job, dataSource);
   }
 }

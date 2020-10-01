@@ -8,8 +8,8 @@ const config = {
   host: '127.0.0.1',
   port: 3306,
   user: 'root',
-  password: 'Vidushi/123',
-  database: 'authentication'
+  password: 'root',
+  database: 'authentication',
 };
 
 // Observe application's life cycle to disconnect the datasource when
