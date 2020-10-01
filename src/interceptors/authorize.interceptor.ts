@@ -1,5 +1,17 @@
-import {AuthenticationBindings, AuthenticationMetadata} from '@loopback/authentication';
-import {Getter, globalInterceptor, inject, Interceptor, InvocationContext, InvocationResult, Provider, ValueOrPromise} from '@loopback/context';
+import {
+  AuthenticationBindings,
+  AuthenticationMetadata,
+} from '@loopback/authentication';
+import {
+  Getter,
+  globalInterceptor,
+  inject,
+  Interceptor,
+  InvocationContext,
+  InvocationResult,
+  Provider,
+  ValueOrPromise,
+} from '@loopback/context';
 import {HttpErrors} from '@loopback/rest';
 import {intersection} from 'lodash';
 import {MyUserProfile, RequiredPermissions} from '../types';
@@ -10,7 +22,6 @@ import {MyUserProfile, RequiredPermissions} from '../types';
  */
 @globalInterceptor('', {tags: {name: 'authorize'}})
 export class AuthorizeInterceptor implements Provider<Interceptor> {
-
   constructor(
     @inject(AuthenticationBindings.METADATA)
     public metadata: AuthenticationMetadata,
@@ -18,7 +29,6 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
     // dependency inject
     @inject.getter(AuthenticationBindings.CURRENT_USER)
     public getCurrentUser: Getter<MyUserProfile>,
-
   ) {}
 
   /**
@@ -40,6 +50,7 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
     invocationCtx: InvocationContext,
     next: () => ValueOrPromise<InvocationResult>,
   ) {
+    // eslint-disable-next-line no-useless-catch
     try {
       // Add pre-invocation logic here
 
@@ -47,7 +58,7 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
       // console.log(this.metadata);
 
       // if you not provide options in your @authenticate decorator
-      if (!this.metadata) return await next();
+      if (!this.metadata) return next();
 
       const requriedPermissions = this.metadata.options as RequiredPermissions;
 
@@ -59,7 +70,10 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
         user.permissions,
         requriedPermissions.required,
       ).length;
-      if (requriedPermissions.required != undefined && results !== requriedPermissions.required.length) {
+      if (
+        requriedPermissions.required !== undefined &&
+        results !== requriedPermissions.required.length
+      ) {
         throw new HttpErrors.Forbidden('INVALID ACCESS');
       }
 

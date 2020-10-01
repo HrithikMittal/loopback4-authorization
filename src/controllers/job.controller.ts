@@ -1,6 +1,20 @@
 import {authenticate} from '@loopback/authentication';
-import {Count, CountSchema, Filter, repository, Where} from '@loopback/repository';
-import {del, get, getModelSchemaRef, param, patch, post, requestBody} from '@loopback/rest';
+import {
+  Count,
+  CountSchema,
+  Filter,
+  repository,
+  Where,
+} from '@loopback/repository';
+import {
+  del,
+  get,
+  getModelSchemaRef,
+  param,
+  patch,
+  post,
+  requestBody,
+} from '@loopback/rest';
 import {PermissionKeys} from '../authorization/permission-keys';
 import {Job} from '../models';
 import {JobRepository} from '../repositories';
@@ -54,11 +68,8 @@ export class JobController {
       },
     },
   })
-
   @authenticate('jwt', {required: [PermissionKeys.AccessAuthFeature]})
-  async find(
-    @param.filter(Job) filter?: Filter<Job>,
-  ): Promise<Job[]> {
+  async find(@param.filter(Job) filter?: Filter<Job>): Promise<Job[]> {
     return this.jobRepository.find(filter);
   }
 
@@ -73,7 +84,6 @@ export class JobController {
       },
     },
   })
-
   @authenticate('jwt', {required: [PermissionKeys.UpdateJob]})
   async updateAll(
     @requestBody({
@@ -89,7 +99,6 @@ export class JobController {
     return this.jobRepository.updateAll(job, where);
   }
 
-
   // admin should be authenticated
   // only admin can access this route
   // Please run x and y function before this (using interceptor)
@@ -100,7 +109,6 @@ export class JobController {
       },
     },
   })
-
   @authenticate('jwt', {required: [PermissionKeys.DeleteJob]})
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.jobRepository.deleteById(id);

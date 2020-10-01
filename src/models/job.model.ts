@@ -15,7 +15,6 @@ export class Job extends Entity {
   })
   title: string;
 
-
   constructor(data?: Partial<Job>) {
     super(data);
   }

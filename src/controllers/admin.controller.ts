@@ -1,6 +1,6 @@
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {getJsonSchemaRef, post, requestBody} from '@loopback/rest';
+import {getModelSchemaRef, post, requestBody} from '@loopback/rest';
 import _ from 'lodash';
 import {PermissionKeys} from '../authorization/permission-keys';
 import {PasswordHasherBindings} from '../keys';
@@ -8,7 +8,6 @@ import {User} from '../models';
 import {UserRepository} from '../repositories';
 import {validateCredentials} from '../services';
 import {BcryptHasher} from '../services/hash.password';
-
 
 export class AdminController {
   constructor(
@@ -24,18 +23,16 @@ export class AdminController {
       '200': {
         description: 'Admin',
         content: {'application/json': {schema: getModelSchemaRef(User)}},
-      }
-    }
+      },
+    },
   })
   async createAdmin(@requestBody() admin: User) {
-
     validateCredentials(_.pick(admin, ['email', 'password']));
     admin.permissions = [
       PermissionKeys.CreateJob,
       PermissionKeys.UpdateJob,
-      PermissionKeys.DeleteJob
+      PermissionKeys.DeleteJob,
     ];
-
 
     admin.password = await this.hasher.hashPassword(admin.password);
 
@@ -43,5 +40,4 @@ export class AdminController {
     delete savedAdmin.password;
     return savedAdmin;
   }
-
 }
