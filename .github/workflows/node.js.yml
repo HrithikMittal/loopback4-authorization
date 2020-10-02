@@ -30,6 +30,6 @@ jobs:
         mysql root password: root
         mysql database: authentication
     - run: npm ci
-    - run: npm run migrate
     - run: npm run build --if-present
+    - run: npm run migrate
     - run: npm test
