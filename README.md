@@ -261,3 +261,5 @@ console.log(requriedPermissions);
   ```
 
 # Finally Done
+(Re-migrate your database like this)
+`npm run clean; npm run build; npm run migrate`
