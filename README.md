@@ -113,14 +113,13 @@ Go to the `job Create controller`
 
   Now create a file `tyes.ts`
 
+```typescript
+import {PermissionKeys} from './authorization/permission-keys';
 
-  ```typescript
-  import {PermissionKeys} from './authorization/permission-keys';
-
-  export interface RequiredPermissions {
-    required: PermissionKeys[];
-  }
-  ```
+export interface RequiredPermissions {
+  required: PermissionKeys[];
+}
+```
 
 Now go to the authenticate interceptor and add the Metadata
 
@@ -261,3 +260,6 @@ console.log(requriedPermissions);
   ```
 
 # Finally Done
+
+(Re-migrate your database like this)
+`npm run clean; npm run build; npm run migrate`
