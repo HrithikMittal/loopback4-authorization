@@ -29,6 +29,7 @@ export class JobController {
   // only admin can access this route
   // Please run x and y function before this (using interceptor)
   @post('/jobs', {
+    security: OPERATION_SECURITY_SPEC
     responses: {
       '200': {
         description: 'Job model instance',
@@ -54,6 +55,7 @@ export class JobController {
   }
 
   @get('/jobs', {
+    security: OPERATION_SECURITY_SPEC
     responses: {
       '200': {
         description: 'Array of Job model instances',
@@ -77,6 +79,7 @@ export class JobController {
   // only admin can access this route
   // Please run x and y function before this (using interceptor)
   @patch('/jobs', {
+    security: OPERATION_SECURITY_SPEC
     responses: {
       '200': {
         description: 'Job PATCH success count',
@@ -103,6 +106,7 @@ export class JobController {
   // only admin can access this route
   // Please run x and y function before this (using interceptor)
   @del('/jobs/{id}', {
+    security: OPERATION_SECURITY_SPEC
     responses: {
       '204': {
         description: 'Job DELETE success',
